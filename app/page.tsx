@@ -21,7 +21,7 @@ interface Category {
 
 interface MenuItem {
   _id: string
-  name: string
+  name:string
   description?: string
   category: {
     _id: string
@@ -79,10 +79,11 @@ export default function SilverStarMenu() {
         })
 
         setMenuItems(itemsByCategory)
-        setCategories(categoriesResponse.data)
+        const sortedCategories = categoriesResponse.data.sort((a, b) => a.sortOrder - b.sortOrder);
+        setCategories(sortedCategories);
 
-        if (categoriesResponse.data.length > 0) {
-          setActiveCategory(categoriesResponse.data[0]._id)
+        if (sortedCategories.length > 0) {
+          setActiveCategory(sortedCategories[0]._id)
         }
       } catch (error: any) {
         toast.error("Failed to fetch data")
@@ -160,20 +161,16 @@ export default function SilverStarMenu() {
         <div
           className={`transition-all duration-1000 ${isLoaded ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
         >
-          <div className="flex justify-center items-center mb-4">
-            <Star
-              className="w-8 h-8 text-amber-400 fill-current mr-2 animate-spin"
-              style={{ animationDuration: "3s" }}
-            />
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400 bg-clip-text text-transparent animate-pulse">
-              HOTEL SILVER STAR
-            </h1>
-            <Star
-              className="w-8 h-8 text-amber-400 fill-current ml-2 animate-spin"
-              style={{ animationDuration: "3s" }}
+          {/* --- LOGO SECTION --- */}
+          <div className="flex justify-center mb-4">
+            <img
+              src="/cropped-bakecityhyper-logo.png"
+              alt="Bake City Hypermarket Logo"
+              className="w-40 md:w-56 h-auto" // Adjust width as needed
             />
           </div>
-          <p className="text-xl md:text-2xl text-amber-300 font-light tracking-wider">DELICIOUS MENU</p>
+          
+          <p className="text-xl md:text-2xl text-red-200 font-light tracking-wider">live menu</p>
           <div className="w-32 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4 animate-pulse" />
         </div>
       </header>
@@ -218,32 +215,40 @@ export default function SilverStarMenu() {
               {categories.find((cat) => cat._id === activeCategory)?.name} Menu
             </h2>
 
-            {/* Updated grid for 3 cards on mobile */}
-            <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
               {menuItems[activeCategory]?.map((item) => (
                 <Card
                   key={item._id}
                   className="group bg-gradient-to-br from-gray-900/80 to-black/80 border-amber-400/30 hover:border-amber-400 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/10 backdrop-blur-sm"
                 >
                   <CardContent className="p-0">
+                    {/* Image Container */}
                     <div className="relative overflow-hidden rounded-t-lg">
                       {item.image?.url ? (
                         <img
                           src={item.image.url}
                           alt={item.name}
-                          className="w-full h-20 sm:h-24 md:h-28 lg:h-32 xl:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-20 sm:h-24 md:h-28 lg:h-32 xl:h-40 object-cover transition-all duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <div className="w-full h-20 sm:h-24 md:h-28 lg:h-32 xl:h-40 bg-gray-800 flex items-center justify-center">
                           <UtensilsCrossed className="w-8 h-8 text-amber-400/50" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute top-1 right-1">
-                        <Badge className="bg-amber-400 text-black font-bold text-xxs sm:text-xs">
-                          ₹{item.sizes ?
-                            item.sizes.quarter || item.sizes.normal || item.sizes.full || item.price
-                            : item.price}
+
+                      {/* "Unavailable" Badge/Tag */}
+                      {!item.isAvailable && (
+                        <div className="absolute top-1 right-1 z-20">
+                          <Badge className="bg-red-500/70 text-white font-bold text-xxs sm:text-xs animate-pulse">
+                            Unavailable
+                          </Badge>
+                        </div>
+                      )}
+
+                      {/* Price Badge */}
+                      <div className="absolute bottom-1 left-1 z-10">
+                        <Badge className="bg-amber-400/80 text-black font-bold text-xxs sm:text-xs">
+                          ₹{item.price}
                         </Badge>
                       </div>
                     </div>
@@ -252,14 +257,12 @@ export default function SilverStarMenu() {
                       <h3 className="text-xs sm:text-sm md:text-base font-bold text-amber-300 mb-1 group-hover:text-amber-400 transition-colors line-clamp-2">
                         {item.name}
                       </h3>
-                      <div className="text-[16px] sm:text-[18px] md:text-[20px] text-amber-400 font-bold mb-1">
-  {item.sizes?.quarter ? '' : `₹${item.price}`}
-</div>
 
-                      {item.sizes ? (
+                      {/* Sizes */}
+                      {item.sizes && Object.entries(item.sizes).some(([_, price]) => price && price > 0) && (
                         <div className="space-y-1">
                           {Object.entries(item.sizes)
-                            .filter(([_, price]) => price && price > 0) // Only include sizes with price > 0
+                            .filter(([_, price]) => price && price > 0)
                             .map(([size, price]) => (
                               <div key={size} className="flex justify-between text-xxs sm:text-xs">
                                 <span className="text-gray-300 capitalize">{size}</span>
@@ -267,7 +270,13 @@ export default function SilverStarMenu() {
                               </div>
                             ))}
                         </div>
-                      ) : null}
+                      )}
+
+                      {/* Additional details */}
+                      <div className="flex items-center space-x-2 text-xs mt-1">
+                          {item.isVegetarian && <span className="text-green-400 border border-green-400 px-1.5 py-0.5 rounded">V</span>}
+                          {item.isSpicy && <span className="text-red-400 border border-red-400 px-1.5 py-0.5 rounded">🌶️</span>}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -281,10 +290,10 @@ export default function SilverStarMenu() {
       <footer className="relative z-10 text-center py-6 sm:py-8 px-4 border-t border-amber-400/30">
         <div className="flex justify-center items-center mb-2 sm:mb-4">
           <Star className="w-4 h-4 sm:w-6 sm:h-6 text-amber-400 fill-current mr-2" />
-          <p className="text-sm sm:text-lg text-amber-300 font-semibold">PATTAMBI ROAD, CHERPULASSERY</p>
+          <p className="text-sm sm:text-lg text-amber-300 font-semibold">West Puduppadi, Puduppadi, Kozhikode, Kerala, India.</p>
           <Star className="w-4 h-4 sm:w-6 sm:h-6 text-amber-400 fill-current ml-2" />
         </div>
-        <p className="text-xs sm:text-sm text-amber-400 font-bold">📞 0466-2281 030 | 9656 093 805</p>
+        <p className="text-xs sm:text-sm text-amber-400 font-bold">📞 +91 9709703040</p>
       </footer>
     </div>
   )

@@ -8,8 +8,8 @@ import '../public/icon.png'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Hotel-Silver-Star",
-  description: "Delicious menu for Hotel Silver Star",
+  title: "Bake City",
+  description: "Delicious menu for Bake City",
   generator: "v0.dev",
   icons: {
     icon: "/icon.png", // path is from public folder root

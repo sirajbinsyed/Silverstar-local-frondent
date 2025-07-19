@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     const response = await authAPI.login(email, password)
     setUser(response.user)
+    return response.user  // ✅ Return the user so you can get the role
   }
 
   const logout = () => {

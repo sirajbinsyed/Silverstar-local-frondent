@@ -158,3 +158,18 @@ export const menuAPI = {
     });
   },
 };
+
+export const restaurantsAPI = {
+  getAll: () => fetch("/api/restaurants").then(res => res.json()),
+  create: (data: any) => fetch("/api/restaurants", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(res => res.json()),
+  update: (id: string, data: any) => fetch(`/api/restaurants/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(res => res.json()),
+  delete: (id: string) => fetch(`/api/restaurants/${id}`, { method: "DELETE" }).then(res => res.json())
+}

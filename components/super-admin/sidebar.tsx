@@ -40,13 +40,13 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-center p-4 lg:p-6 border-b border-amber-400/30">
-            {/* Logo Only - Replaced title section with just the image */}
-            <img
-              src="/cropped-bakecityhyper-logo.png" // Make sure this path is correct relative to your public folder
-              alt="Bakecity Logo"
-              className="w-10 h-10 lg:w-40 lg:h-40 object-contain" // Adjust size as needed. Removed 'mr-2' as there's no text next to it.
-            />
-            {/* Removed the h1 and p tags for title and subtitle */}
+            <Star className="w-6 h-6 lg:w-8 lg:h-8 text-amber-400 fill-current mr-2" />
+            <div className="text-center">
+              <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                Silver Star
+              </h1>
+              <p className="text-xs text-gray-400">Admin Panel</p>
+            </div>
           </div>
 
           {/* Navigation */}

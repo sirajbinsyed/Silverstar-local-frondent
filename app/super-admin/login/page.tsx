@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,16 +24,9 @@ export default function AdminLogin() {
     setIsLoading(true)
 
     try {
-      const data = await login(credentials.email, credentials.password)
+      await login(credentials.email, credentials.password)
       toast.success("Login successful!")
-
-      if (data.role === "super_admin") {
-        router.push("/super-admin/dashboard")
-      } else if (data.role === "admin") {
-        router.push("/admin/dashboard")
-      } else {
-        toast.error("Unauthorized role")
-      }
+      router.push("/admin/dashboard")
     } catch (error: any) {
       toast.error(error.message || "Login failed")
     } finally {
@@ -61,7 +55,9 @@ export default function AdminLogin() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-amber-300">Email</Label>
+              <Label htmlFor="email" className="text-amber-300">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -74,7 +70,9 @@ export default function AdminLogin() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-amber-300">Password</Label>
+              <Label htmlFor="password" className="text-amber-300">
+                Password
+              </Label>
               <div className="relative">
                 <Input
                   id="password"

@@ -79,12 +79,25 @@ export default function SilverStarMenu() {
         })
 
         setMenuItems(itemsByCategory)
-        const sortedCategories = categoriesResponse.data.sort((a, b) => a.sortOrder - b.sortOrder);
-        setCategories(sortedCategories);
+        
+        // --- MODIFICATION START ---
+        // 1. Filter out inactive categories first.
+        const activeCategories = categoriesResponse.data.filter(
+          (cat: Category) => cat.isActive
+        );
+        
+        // 2. Sort the remaining active categories.
+        const sortedActiveCategories = activeCategories.sort((a, b) => a.sortOrder - b.sortOrder);
+        
+        // 3. Set the state with only the active, sorted categories.
+        setCategories(sortedActiveCategories);
 
-        if (sortedCategories.length > 0) {
-          setActiveCategory(sortedCategories[0]._id)
+        // 4. Set the initial active category from the filtered list.
+        if (sortedActiveCategories.length > 0) {
+          setActiveCategory(sortedActiveCategories[0]._id)
         }
+        // --- MODIFICATION END ---
+        
       } catch (error: any) {
         toast.error("Failed to fetch data")
         console.error("Error fetching data:", error)

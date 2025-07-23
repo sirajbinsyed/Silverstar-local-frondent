@@ -42,7 +42,7 @@ interface Category {
 }
 
 // Define the maximum file size in bytes (5MB)
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 * 1024 * 1024 = 5MB
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 export default function MenuItemsPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
@@ -215,7 +215,7 @@ export default function MenuItemsPage() {
 
   const filteredItems = menuItems.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = !selectedCategory || selectedCategory === "all" || item.category._id === selectedCategory
+    const matchesCategory = !selectedCategory || selectedCategory === "all" || item.category?._id === selectedCategory
     return matchesSearch && matchesCategory
   })
 
@@ -456,78 +456,81 @@ export default function MenuItemsPage() {
       {/* Menu Items Grid - Responsive */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
         {filteredItems.map((item) => (
-          <Card key={item._id} className="bg-gradient-to-br from-gray-900/80 to-black/80 border-amber-400/30">
-            <CardHeader className="p-4 lg:p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="text-base lg:text-lg text-amber-400 truncate">{item.name}</CardTitle>
-                  <p className="text-xs lg:text-sm text-gray-400 truncate">{item.category.name}</p>
-                </div>
-                <div className="flex space-x-1 lg:space-x-2 flex-shrink-0 ml-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => startEdit(item)}
-                    className="border-amber-400/50 text-amber-400 p-1 lg:p-2"
-                  >
-                    <Edit className="w-3 h-3 lg:w-4 lg:h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDelete(item._id)}
-                    className="border-red-400/50 text-red-400 p-1 lg:p-2"
-                  >
-                    <Trash2 className="w-3 h-3 lg:w-4 lg:h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 lg:p-6 pt-0">
-              {item.image?.url && (
-                <img
-                  src={item.image.url || "/placeholder.svg"}
-                  alt={item.name}
-                  className="w-full h-24 lg:h-32 object-cover rounded mb-3 lg:mb-4"
-                />
-              )}
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs lg:text-sm">
-                  <span className="text-gray-400">Base Price:</span>
-                  <span className="text-amber-400 font-semibold">₹{item.price}</span>
-                </div>
-
-                {item.sizes && Object.values(item.sizes).some((price) => price !== undefined && price !== null && price > 0) && (
-                  <div className="space-y-1">
-                    <span className="text-gray-400 text-xs lg:text-sm">Sizes:</span>
-                    <div className="grid grid-cols-2 gap-1">
-                      {Object.entries(item.sizes).map(
-                        ([size, price]) =>
-                          price !== undefined && price !== null && price > 0 && (
-                            <div key={size} className="flex justify-between text-xs">
-                              <span className="text-gray-300 capitalize truncate">{size}:</span>
-                              <span className="text-amber-400">₹{price}</span>
-                            </div>
-                          ),
-                      )}
-                    </div>
+          // This conditional render ensures that only items with a category are displayed
+          item.category && (
+            <Card key={item._id} className="bg-gradient-to-br from-gray-900/80 to-black/80 border-amber-400/30">
+              <CardHeader className="p-4 lg:p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-base lg:text-lg text-amber-400 truncate">{item.name}</CardTitle>
+                    <p className="text-xs lg:text-sm text-gray-400 truncate">{item.category.name}</p>
                   </div>
+                  <div className="flex space-x-1 lg:space-x-2 flex-shrink-0 ml-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => startEdit(item)}
+                      className="border-amber-400/50 text-amber-400 p-1 lg:p-2"
+                    >
+                      <Edit className="w-3 h-3 lg:w-4 lg:h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(item._id)}
+                      className="border-red-400/50 text-red-400 p-1 lg:p-2"
+                    >
+                      <Trash2 className="w-3 h-3 lg:w-4 lg:h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 lg:p-6 pt-0">
+                {item.image?.url && (
+                  <img
+                    src={item.image.url || "/placeholder.svg"}
+                    alt={item.name}
+                    className="w-full h-24 lg:h-32 object-cover rounded mb-3 lg:mb-4"
+                  />
                 )}
-
-                <div className="flex items-center justify-between text-xs lg:text-sm">
-                  <span className="text-gray-400">Status:</span>
-                  <span className={item.isAvailable ? "text-green-400" : "text-red-400"}>
-                    {item.isAvailable ? "Available" : "Unavailable"}
-                  </span>
+  
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs lg:text-sm">
+                    <span className="text-gray-400">Base Price:</span>
+                    <span className="text-amber-400 font-semibold">₹{item.price}</span>
+                  </div>
+  
+                  {item.sizes && Object.values(item.sizes).some((price) => price !== undefined && price !== null && price > 0) && (
+                    <div className="space-y-1">
+                      <span className="text-gray-400 text-xs lg:text-sm">Sizes:</span>
+                      <div className="grid grid-cols-2 gap-1">
+                        {Object.entries(item.sizes).map(
+                          ([size, price]) =>
+                            price !== undefined && price !== null && price > 0 && (
+                              <div key={size} className="flex justify-between text-xs">
+                                <span className="text-gray-300 capitalize truncate">{size}:</span>
+                                <span className="text-amber-400">₹{price}</span>
+                              </div>
+                            ),
+                        )}
+                      </div>
+                    </div>
+                  )}
+  
+                  <div className="flex items-center justify-between text-xs lg:text-sm">
+                    <span className="text-gray-400">Status:</span>
+                    <span className={item.isAvailable ? "text-green-400" : "text-red-400"}>
+                      {item.isAvailable ? "Available" : "Unavailable"}
+                    </span>
+                  </div>
+  
+                  <div className="flex flex-wrap gap-1 lg:gap-2 text-xs">
+                    {item.isVegetarian && <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">Veg</span>}
+                  </div>
                 </div>
-
-                <div className="flex flex-wrap gap-1 lg:gap-2 text-xs">
-                  {item.isVegetarian && <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">Veg</span>}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )
         ))}
       </div>
 

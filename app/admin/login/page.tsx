@@ -49,13 +49,13 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md bg-gradient-to-br from-gray-900/80 to-black/80 border-amber-400/30 backdrop-blur-sm relative z-10">
         <CardHeader className="text-center">
           <div className="flex justify-center items-center mb-4">
-            <Star className="w-8 h-8 text-amber-400 fill-current mr-2" />
+           
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
               Admin Panel
             </CardTitle>
-            <Star className="w-8 h-8 text-amber-400 fill-current ml-2" />
+           
           </div>
-          <p className="text-amber-300">Hotel Silver Star</p>
+        
         </CardHeader>
 
         <CardContent>
